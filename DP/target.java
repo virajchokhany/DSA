@@ -219,11 +219,146 @@ public class target
 
 
 
+    // 698
+    public static boolean canPartitionKSubsets(int arr[],int k,int idx,int ssf,int tar,boolean vis[])
+    {
+        if(ssf>tar)
+            return false;
+        if(k==0)
+            return true;
+        if(ssf==tar)
+            return canPartitionKSubsets(arr,k-1,0,0,tar,vis);
+        boolean res=false;
+        for(int i=idx;i<arr.length;i++)
+        {
+            if(vis[i]==false)
+            {
+                vis[i]=true;
+                res=res||canPartitionKSubsets(arr,k,i+1,ssf+arr[i],tar,vis);
+                vis[i]=false;
+            }
+        }
+        return res;
+    }
+    public static boolean canPartitionKSubsets(int[] arr, int k) {
+        
+        int n=arr.length;
+        int sum=0;
+        for(int ele:arr)    sum+=ele;
+        if(sum%k!=0)return false;
+        return canPartitionKSubsets(arr,k,0,0,sum/k,new boolean[n]);
+    }
 
 
-
-
+    // knight in chessboard
+    // memoisation
+    public double knightProbability(int n, int k, int r, int c) 
+    {
+        int x[] = { 2, 1, -1, -2, -2, -1, 1, 2 };
+        int y[] = { 1, 2, 2, 1, -1, -2, -2, -1 };
+        double dp[][][]=new double[k+1][n][n];//rck
+        for(double dd[][]:dp)
+        {
+            for(double d[]:dd)
+                Arrays.fill(d,-1.0);
+        }
+        return knightProbability_memo(n,r,c,k,x,y,dp);
+    }
+    public double knightProbability_memo(int n,int sr,int sc,int k,int x[],int y[],double dp[][][])
+    {
+        
+        if(k==0)
+            return 1.0;
+        if(dp[k][sr][sc]!=-1)
+            return dp[k][sr][sc];
+        double ans=0;
+        for(int i=0;i<8;i++)
+        {
+            int r=sr+x[i];
+            int c=sc+y[i];
+            if(r>=0 && r<n && c>=0 && c<n)
+            {
+                ans+=(1.0/8.0)*knightProbability_memo(n,r,c,k-1,x,y,dp);
+            }
+        }
+        return dp[k][sr][sc]=ans;
+    }
     
+    //tabulation
+    public double knightProbability(int n,int SR,int SC,int K,int x[],int y[],double dp[][][])
+    {
+        for(int k=0;k<=K;k++)
+        {
+            for(int sr=0;sr<n;sr++)
+            {
+                for(int sc=0;sc<n;sc++)
+                {
+                    if(k==0)
+                    {
+                        dp[k][sr][sc]=1.0;
+                        continue;
+                    }
+                    
+                    double ans=0;
+                    for(int i=0;i<8;i++)
+                    {
+                        int r=sr+x[i];
+                        int c=sc+y[i];
+                        if(r>=0 && r<n && c>=0 && c<n)
+                        {
+                            ans+=(1.0/8.0)*dp[k-1][r][c];   
+                        }
+                    }
+                   dp[k][sr][sc]=ans;
+                }
+            }
+        }
+        return dp[K][SR][SC];
+        
+    }
+    
+    
+    // 576
+    public int findPaths(int m, int n, int move, int r, int c) {
+        int dir[][]={{1,0},{-1,0},{0,1},{0,-1}};
+        long dp[][][]=new long[move+1][m][n];
+        return (int)findPaths(m,n,move,r,c,dir,dp);
+    }
+    public long findPaths(int m,int n,int MOVE,int SR,int SC,int dir[][],long dp[][][])
+    {
+        int mod=1000000000+7;
+        for(int move=0;move<=MOVE;move++)
+        {
+            for(int sr=0;sr<m;sr++)
+            {
+                for(int sc=0;sc<n;sc++)
+                {
+                    if(move==0)
+                    {
+                        continue;
+                    }
+                    
+                    long count=0;
+                    for(int d[]:dir)
+                    {
+                        int r=sr+d[0];
+                        int c=sc+d[1];
+                        if(r<0 || c<0 || r==m || c==n)
+                        {
+                            count=(count+1)%mod;
+                        }
+                        else
+                        {
+                            count=(count+dp[move-1][r][c])%mod;        
+                        }
+                    }
+                     dp[move][sr][sc]=count;
+                }
+            }
+        }
+        return dp[MOVE][SR][SC];
+        
+    }
     public static void main(String[] args) {
         // int arr[]={2,3,5,7};
         // int tar=10;
@@ -235,8 +370,10 @@ public class target
         // int coins[] = {1};
         // int amount=2;
         // System.out.println(coinChange(coins, amount));
-        int nums[]={0,0,0,0,0,0,0,0,1};
-        int target=1;
+        //
+        int arr[]={605,454,322,218,8,19,651,2220,175,710,2666,350,252,2264,327,1843};
+        int k=4;
+        System.out.println(canPartitionKSubsets(arr, k));
         
     }
 }

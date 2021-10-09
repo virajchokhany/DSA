@@ -18,6 +18,9 @@ public class cut
         }
         System.out.println();
     }
+    
+    
+    
     public static int minScoreTriangulation(int[] values)
     {
         int n=values.length;
