@@ -1,2 +1,2 @@
-((A(BC))D)
-26000
+MIN VALUE = 27
+MAX VALUE = 105
