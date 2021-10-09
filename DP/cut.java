@@ -19,6 +19,8 @@ public class cut
         System.out.println();
     }
     
+
+    //``````````````````````````````````````````````````````````````````````````````````````````````````````````````````
     // matrix chain multiplication
     public static int mcm(int p[])
     {
@@ -72,7 +74,7 @@ public class cut
         return dp[I][J];
     }
   
-  
+    //`````````````````````````````````````````````````````````````````````````````````````````````````````````````
     // print brackets memoisation
     public static String printMCMBrackets(int p[],int i,int j,int dp[][],String sdp[][])
     {
@@ -132,7 +134,7 @@ public class cut
 
     
 
-
+    //``````````````````````````````````````````````````````````````````````````````````````````````````````````````
     public static int minScoreTriangulation(int[] values)
     {
         int n=values.length;
@@ -187,9 +189,56 @@ public class cut
         }
         return dp[I][J];
     }
+
+    //````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+
+    public static class pair
+    {
+        int min=(int)1e9;
+        int max=-(int)1e9;
+    }
+    public static pair minMax(String str)
+    {
+        int n=str.length();
+        return minMax(str,0,n-1);
+    }
+    private static pair minMax(String str, int i, int j) 
+    {
+        if(i==j)
+        {
+            pair base=new pair();
+            base.max=base.min=str.charAt(i)-'0';
+        }
+        pair ans=new pair();
+        for(int k=i+1;k<j;k=k+2)
+        {
+            pair l=minMax(str, i, k-1);
+            pair r=minMax(str, k+1, j);
+            if(str.charAt(k)=='+')
+            {
+                // min
+                ans.min=Math.min(ans.min,l.min+r.min);
+                //max 
+                ans.max=Math.max(ans.max, l.max+r.max);
+            }
+            else
+            {
+                // min
+                ans.min=Math.min(ans.min,l.min*r.min);
+                //max 
+                ans.max=Math.max(ans.max, l.max*r.max);
+            }
+        }
+        return ans;
+    }
+
     public static void main(String[] args) 
     {
-        int p[]={40,20,30,10,30};
-        System.out.println(mcm(p));
+        // int p[]={40,20,30,10,30};
+        // System.out.println(mcm(p));
+
+        pair ans=minMax("1+2*3+4*5");
+        System.out.println("MIN VALUE = "+ans.min);
+        System.out.println("MAX VALUE = "+ans.max);
     }
 }
