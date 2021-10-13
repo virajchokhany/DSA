@@ -282,13 +282,188 @@ public class cut
     } 
    
     //```````````````````````````````````````````````````````````````````````````````````````````````````````````````
+    
+    
+    //``````````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+    // balloon burst LC- 312
+
+    public static int maxCoins(int[] nums) 
+    {
+        int n=nums.length;
+        int dp[][]=new int[n][n];
+        // for(int d[]:dp)
+        //     Arrays.fill(d, -1);
+        return maxCoins_tabu(nums,0,n-1,dp);    
+    }
+    
+    // memoisation
+    private static int maxCoins_memo(int[] nums, int i, int j,int dp[][]) 
+    {
+        if(dp[i][j]!=-1)
+            return dp[i][j];
+        int mx=-(int)1e9;
+        int l=i-1>=0?nums[i-1]:1;
+        int r=j+1<nums.length?nums[j+1]:1;
+        for(int k=i;k<=j;k++)
+        {
+            int left=0,right=0;
+            if(i<=k-1)
+                left=maxCoins_memo(nums, i, k-1,dp);
+            if(k+1<=j)
+                right=maxCoins_memo(nums, k+1, j, dp);
+            int myCost=left+right+nums[k]*l*r;
+            mx=Math.max(mx,myCost);
+        }
+        return dp[i][j]=mx;
+    }
+
+    // tabulation
+    private static int maxCoins_tabu(int nums[],int I,int J,int dp[][])
+    {
+        int n=nums.length;
+        for(int gap=0;gap<n;gap++)
+        {
+            for(int i=0,j=gap;j<n;i++,j++)
+            {
+                
+                int mx=-(int)1e9;
+                int l=i-1>=0?nums[i-1]:1;
+                int r=j+1<nums.length?nums[j+1]:1;
+                for(int k=i;k<=j;k++)
+                {
+                    int left=0,right=0;
+                    if(i<=k-1)
+                        left=dp[i][k-1];    //maxCoins_memo(nums, i, k-1,dp);
+                    if(k+1<=j)
+                        right=dp[k+1][j];   //maxCoins_memo(nums, k+1, j, dp);
+                    int myCost=left+right+nums[k]*l*r;
+                    mx=Math.max(mx,myCost);
+                }
+                dp[i][j]=mx;
+            }
+        }   
+        return dp[I][J];
+    }
+    //```````````````````````````````````````````````````````````````````````````````````````````````````````````````````
+    
+
+
+    // `````````````````````````````````````````````````````````````````````````````````````````````````````````````
+    // boolean parenthesization
+    public static class boolClass
+    {
+        int trueWays;
+        int falseWays;
+    }
+    public static int countWays(int N, String s)
+    {
+        boolClass dp[][]=new boolClass[N][N];
+        return countWays_tabu(s, 0, N-1,dp).trueWays;
+    }
+
+    // memoisation
+    private static boolClass countWays(String s, int i, int j, boolClass[][] dp) 
+    {
+        if(i==j)
+        {
+            boolClass base=new boolClass();
+            base.trueWays=(s.charAt(i)=='T'?1:0);
+            base.falseWays=(s.charAt(i)=='F'?1:0);
+            return dp[i][j]=base;
+        }
+
+        if(dp[i][j]!=null)
+            return dp[i][j];
+
+        boolClass ways=new boolClass();
+        for(int k=i+1;k<j;k+=2)
+        {
+            boolClass left=new boolClass();
+            boolClass right=new boolClass();
+            if(i<=k-1)
+                left=countWays(s, i, k-1, dp);
+            if(k+1<=j)
+                right=countWays(s, k+1, j, dp);
+
+            if(s.charAt(k)=='|')
+            {
+                ways.trueWays+=left.falseWays*right.trueWays+left.trueWays*right.falseWays+left.trueWays*right.trueWays;
+                ways.falseWays+=left.falseWays*right.falseWays;
+            }
+            else if(s.charAt(k)=='&')
+            {
+                ways.trueWays+=left.trueWays*right.trueWays;
+                ways.falseWays+=left.trueWays*right.falseWays+left.falseWays*right.trueWays+left.falseWays*right.falseWays;
+            }
+            else
+            {
+                ways.trueWays+=(left.falseWays*right.trueWays)+(left.trueWays*right.falseWays);
+                ways.falseWays+=(left.falseWays*right.falseWays)+(left.trueWays*right.trueWays);
+            }
+        }   
+        return dp[i][j]=ways;
+    }
+
+    // tabulation
+    private static boolClass countWays_tabu(String s, int I, int J, boolClass[][] dp) 
+    {
+        int n=s.length();
+        int mod=1003;
+        for(int gap=0;gap<n;gap++)
+        {
+            for(int i=0,j=gap;j<n;i++,j++)
+            {
+                if(i==j)
+                {
+                    boolClass base=new boolClass();
+                    base.trueWays=(s.charAt(i)=='T'?1:0);
+                    base.falseWays=(s.charAt(i)=='F'?1:0);
+                    dp[i][j]=base;
+                    continue;
+                }
+
+                boolClass ways=new boolClass();
+                for(int k=i+1;k<j;k+=2)
+                {
+                    boolClass left=new boolClass();
+                    boolClass right=new boolClass();
+                    if(i<=k-1)
+                        left=dp[i][k-1];    //countWays(s, i, k-1, dp);
+                    if(k+1<=j)
+                        right=dp[k+1][j];   //countWays(s, k+1, j, dp);
+
+                    if(s.charAt(k)=='|')
+                    {
+                        ways.trueWays=(ways.trueWays+left.falseWays*right.trueWays+left.trueWays*right.falseWays+left.trueWays*right.trueWays)%mod;
+                        ways.falseWays=(ways.falseWays+left.falseWays*right.falseWays)%mod;
+                    }
+                    else if(s.charAt(k)=='&')
+                    {
+                        ways.trueWays=(ways.trueWays+left.trueWays*right.trueWays)%mod;
+                        ways.falseWays=(ways.falseWays+left.trueWays*right.falseWays+left.falseWays*right.trueWays+left.falseWays*right.falseWays)%mod;
+                    }
+                    else
+                    {
+                        ways.trueWays=(ways.trueWays+(left.falseWays*right.trueWays)+(left.trueWays*right.falseWays))%mod;
+                        ways.falseWays=(ways.falseWays+(left.falseWays*right.falseWays)+(left.trueWays*right.trueWays))%mod;
+                    }
+                }   
+                dp[i][j]=ways;
+            }
+        }
+        return dp[I][J];
+        
+    }
     public static void main(String[] args) 
     {
         // int p[]={40,20,30,10,30};
         // System.out.println(mcm(p));
 
-        pair ans=minMax("1+2*3+4*5");
-        System.out.println("MIN VALUE = "+ans.min);
-        System.out.println("MAX VALUE = "+ans.max);
+        // pair ans=minMax("1+2*3+4*5");
+        // System.out.println("MIN VALUE = "+ans.min);
+        // System.out.println("MAX VALUE = "+ans.max);
+        // int nums[]={3,1,5,8};
+        // System.out.println(maxCoins(nums));
+        System.out.println(countWays(7, "T|T&F^T"));
     }
 }
