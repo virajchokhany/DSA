@@ -454,6 +454,71 @@ public class cut
         return dp[I][J];
         
     }
+    
+    
+    //`````````````````````````````````````````````````````````````````````````````````````````````````````````````
+    // optimal binary search tree
+    
+    public static int obst(int freq[],int keys[])
+    {
+        int n=keys.length;
+        int psa[]=new int[n];
+        for(int i=0;i<n;i++)
+        {
+            if(i==0)  
+            {
+                psa[i]=freq[i];
+                continue;
+            }
+            psa[i]=psa[i-1]+freq[i];
+        }
+        int dp[][]=new int[n][n];
+        //for(int d[]:dp)Arrays.fill(d, -1);
+        return obst_tabu(freq,keys,0,n-1,psa,dp);
+    }
+    // memoisation
+    private static int obst(int[] freq, int[] keys, int i, int j,int psa[], int dp[][]) 
+    {
+        if(dp[i][j]!=-1)
+            return dp[i][j];
+        int ans=(int)1e9;
+        int psa_value=(i>=1?psa[j]-psa[i-1]:psa[j]);
+        for(int k=i;k<=j;k++)
+        {
+            int left=0,right=0;
+            if(i<=k-1)
+            left=obst(freq, keys, i, k-1, psa,dp);
+            if(k+1<=j)
+            right=obst(freq, keys, k+1, j, psa, dp);
+            ans=Math.min(ans,left+right+psa_value);
+        }
+        return dp[i][j]=ans;
+    }
+
+    // tabulation
+    private static int obst_tabu(int[] freq, int[] keys, int I, int J,int psa[], int dp[][])
+    {
+        int n=freq.length;
+        for(int gap=0;gap<n;gap++)
+        {
+            for(int i=0,j=gap;j<n;i++,j++)
+            {
+                int ans=(int)1e9;
+                int psa_value=(i>=1?psa[j]-psa[i-1]:psa[j]);
+                for(int k=i;k<=j;k++)
+                {
+                    int left=0,right=0;
+                    if(i<=k-1)
+                    left=dp[i][k-1];   //bst(freq, keys, i, k-1, psa,dp);
+                    if(k+1<=j)
+                    right=dp[k+1][j];   //obst(freq, keys, k+1, j, psa, dp);
+                    ans=Math.min(ans,left+right+psa_value);
+                }
+                dp[i][j]=ans;
+            }
+        }
+        return dp[I][J];
+    }
     public static void main(String[] args) 
     {
         // int p[]={40,20,30,10,30};
@@ -464,6 +529,9 @@ public class cut
         // System.out.println("MAX VALUE = "+ans.max);
         // int nums[]={3,1,5,8};
         // System.out.println(maxCoins(nums));
-        System.out.println(countWays(7, "T|T&F^T"));
+        // System.out.println(countWays(7, "T|T&F^T"));
+        int keys[]={10,12,20};
+        int freq[]={34,8,50};
+        System.out.println(obst(freq, keys));
     }
 }
