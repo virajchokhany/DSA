@@ -462,41 +462,32 @@ public class cut
     public static int obst(int freq[],int keys[])
     {
         int n=keys.length;
-        int psa[]=new int[n];
-        for(int i=0;i<n;i++)
-        {
-            if(i==0)  
-            {
-                psa[i]=freq[i];
-                continue;
-            }
-            psa[i]=psa[i-1]+freq[i];
-        }
         int dp[][]=new int[n][n];
-        //for(int d[]:dp)Arrays.fill(d, -1);
-        return obst_tabu(freq,keys,0,n-1,psa,dp);
+        for(int d[]:dp)Arrays.fill(d, -1);
+        return obst(freq,keys,0,n-1,dp);
     }
     // memoisation
-    private static int obst(int[] freq, int[] keys, int i, int j,int psa[], int dp[][]) 
+    private static int obst(int[] freq, int[] keys, int i, int j, int dp[][]) 
     {
         if(dp[i][j]!=-1)
             return dp[i][j];
         int ans=(int)1e9;
-        int psa_value=(i>=1?psa[j]-psa[i-1]:psa[j]);
+        int sum=0;
         for(int k=i;k<=j;k++)
         {
             int left=0,right=0;
             if(i<=k-1)
-            left=obst(freq, keys, i, k-1, psa,dp);
+            left=obst(freq, keys, i, k-1,dp);
             if(k+1<=j)
-            right=obst(freq, keys, k+1, j, psa, dp);
-            ans=Math.min(ans,left+right+psa_value);
+            right=obst(freq, keys, k+1, j, dp);
+            ans=Math.min(ans,left+right);
+            sum+=freq[k];
         }
-        return dp[i][j]=ans;
+        return dp[i][j]=ans+sum;
     }
 
     // tabulation
-    private static int obst_tabu(int[] freq, int[] keys, int I, int J,int psa[], int dp[][])
+    private static int obst_tabu(int[] freq, int[] keys, int I, int J, int dp[][])
     {
         int n=freq.length;
         for(int gap=0;gap<n;gap++)
@@ -504,17 +495,18 @@ public class cut
             for(int i=0,j=gap;j<n;i++,j++)
             {
                 int ans=(int)1e9;
-                int psa_value=(i>=1?psa[j]-psa[i-1]:psa[j]);
+                int sum=0;
                 for(int k=i;k<=j;k++)
                 {
                     int left=0,right=0;
                     if(i<=k-1)
-                    left=dp[i][k-1];   //bst(freq, keys, i, k-1, psa,dp);
+                    left=dp[i][k-1];    //obst(freq, keys, i, k-1,dp);
                     if(k+1<=j)
-                    right=dp[k+1][j];   //obst(freq, keys, k+1, j, psa, dp);
-                    ans=Math.min(ans,left+right+psa_value);
+                    right=dp[k+1][j];   //obst(freq, keys, k+1, j, dp);
+                    ans=Math.min(ans,left+right);
+                    sum+=freq[k];
                 }
-                dp[i][j]=ans;
+                dp[i][j]=ans+sum;
             }
         }
         return dp[I][J];
