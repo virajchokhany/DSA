@@ -139,10 +139,7 @@ public class cut
     {
         int n=values.length;
         int dp[][]=new int[n][n];
-        for(int ar[]:dp)
-            Arrays.fill(ar,-1);
-        int ans=getCuts(0,n-1,values,dp);  
-        display2D(dp);
+        int ans=getCuts_tabu(0,n-1,values,dp);  
         return ans;  
     }
     
@@ -164,12 +161,12 @@ public class cut
         return dp[i][j]=mn;
     }    
 
-    public int getCuts_tabu(int I,int J,int val[],int dp[][])
+    public static int getCuts_tabu(int I,int J,int val[],int dp[][])
     {
         int n=val.length;
-        for(int i=n-1;i>=0;i--)
+        for(int gap=0;gap<n;gap++)
         {
-            for(int j=0;j<n;j++)
+            for(int i=0,j=gap;j<n;i++,j++)
             {
                 if(j-i<2)
                 {
@@ -464,7 +461,7 @@ public class cut
         int n=keys.length;
         int dp[][]=new int[n][n];
         for(int d[]:dp)Arrays.fill(d, -1);
-        return obst(freq,keys,0,n-1,dp);
+        return obst_tabu(freq,keys,0,n-1,dp);
     }
     // memoisation
     private static int obst(int[] freq, int[] keys, int i, int j, int dp[][]) 
@@ -511,6 +508,83 @@ public class cut
         }
         return dp[I][J];
     }
+    
+    
+    // Leetcode 95
+    public static class TreeNode {
+         int val;
+         TreeNode left;
+         TreeNode right;
+         TreeNode() {}
+         TreeNode(int val) { this.val = val; }
+         TreeNode(int val, TreeNode left, TreeNode right) {
+             this.val = val;
+             this.left = left;
+             this.right = right;
+         }
+     }
+    public static List<TreeNode> generateTrees(int n) 
+    {
+        return generateTrees(1,n);    
+    }
+    
+    public static List<TreeNode> generateTrees(int i,int j) 
+    {
+        List<TreeNode> ans=new ArrayList<>();
+        for(int k=i;k<=j;k++)
+        {
+            List<TreeNode> left=generateTrees(i,k-1);
+            List<TreeNode> right=generateTrees(k+1,j);
+            addSubtrees(ans,left,right,k);
+        }
+        return ans;
+    }
+    public static void addSubtrees(List<TreeNode> ans,List<TreeNode> left,List<TreeNode> right,int k)
+    {
+        if(left.size()==0 && right.size()==0) // no subtree :(
+        {
+            ans.add(new TreeNode(k));
+        }
+        else if(left.size()==0 && right.size()!=0)   // only right subtree
+        {
+            for(int i=0;i<right.size();i++)
+            {
+                TreeNode rNode=right.get(i);
+                TreeNode myNode=new TreeNode(k);
+                myNode.right=rNode;
+                ans.add(myNode);
+            }
+        }
+        else if(right.size()==0 && left.size()!=0)  // only left subtree
+        {
+            for(int i=0;i<left.size();i++)
+            {
+                TreeNode lNode=left.get(i);
+                TreeNode myNode=new TreeNode(k);
+                myNode.left=lNode;
+                ans.add(myNode);
+            }
+        }
+        else // both subtree
+        {
+            for(int i=0;i<left.size();i++)
+            {
+                TreeNode lNode=left.get(i);
+                for(int j=0;j<right.size();j++)
+                {
+                    TreeNode rNode=right.get(j);
+                    TreeNode myNode=new TreeNode(k);
+                    myNode.left=lNode;
+                    myNode.right=rNode;
+                    ans.add(myNode);
+                }
+            }
+        }
+    }
+    
+    
+    
+    
     public static void main(String[] args) 
     {
         // int p[]={40,20,30,10,30};
@@ -522,8 +596,12 @@ public class cut
         // int nums[]={3,1,5,8};
         // System.out.println(maxCoins(nums));
         // System.out.println(countWays(7, "T|T&F^T"));
-        int keys[]={10,12,20};
-        int freq[]={34,8,50};
-        System.out.println(obst(freq, keys));
+        // int keys[]={10,12,20};
+        // int freq[]={34,8,50};
+        // System.out.println(obst(freq, keys));
+        // int values[]={3,7,4,5};
+        // System.out.println(minScoreTriangulation(values));
+
+        System.out.println(generateTrees(3));
     }
 }
