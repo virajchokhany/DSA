@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.PriorityQueue;
 public class heapQuestions
 {
@@ -110,6 +111,41 @@ public class heapQuestions
         int idx=pq.peek();
         return matrix[idx/n][idx%n];
     }
+    
+    public int[] topKFrequent(int[] nums, int k) 
+    {
+        HashMap<Integer,Integer> hm=new HashMap<>();
+
+        // O(N)
+        for(int ele:nums)
+        {
+            if(hm.containsKey(ele)==false)
+                hm.put(ele, 1);
+            else
+                hm.put(ele,hm.get(ele)+1);
+        }
+
+        PriorityQueue<Integer> pq=new PriorityQueue<>((a,b)->{
+            return hm.get(a)-hm.get(b);
+        });
+        
+        // O(NLOGK)
+        for(int key:hm.keySet())
+        {
+            pq.add(key);
+            if(pq.size()>k)
+                pq.remove();
+        }
+        int ans[]=new int[k];
+        int i=0;
+        while(pq.size()>0)
+        {
+            int key=pq.remove();
+            ans[i++]=key;
+        }
+        return ans;    
+    }
+    
     public static void main(String[] args) {
         int arr[]={7,10,4,3,20,15};
         int k=4;
