@@ -1,6 +1,5 @@
 public class heapSort
 {
-    
     public static void main(String[] args) 
     {
         int arr[]={10,-22,100,-10,6,55,11,14,9,6,8,-100};
