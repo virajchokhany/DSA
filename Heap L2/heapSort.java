@@ -19,6 +19,8 @@ public class heapSort
             li--;
             downHeapify(arr, 0, li, isIncreasing);
         }
+        for(int ele:arr)
+        System.out.println(ele);
     }
 
     private static void downHeapify(int[] arr, int pi, int li, boolean isIncreasing) 
