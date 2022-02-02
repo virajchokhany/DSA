@@ -602,6 +602,6 @@ public class cut
         // int values[]={3,7,4,5};
         // System.out.println(minScoreTriangulation(values));
 
-        System.out.println(generateTrees(3));
+        System.out.println(generateTrees(10));
     }
 }
