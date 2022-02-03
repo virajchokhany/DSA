@@ -9,7 +9,34 @@ public class AbAddition
         int n2=sc.nextInt();
         int base=sc.nextInt();
 
-        System.out.println(anyBaseAddition(n1,n2,base));
+        // System.out.println(anyBaseAddition(n1,n2,base));
+        System.out.println(anyBaseSubtraction(n1, n2, base));
+    }
+
+    private static int anyBaseSubtraction(int n,int m,int base)
+    {
+        int b=0;
+        int pwr=1;
+        int ans=0;
+        while(n!=0)
+        {
+            int d1=n%10;
+            int d2=m%10;
+            if(d1-(d2+b)>=0)
+            {
+                ans+=pwr*(d1-d2-b);
+                b=0;
+            }
+            else
+            {
+                ans+=pwr*(base+d1-d2-b);
+                b=1;
+            }
+            n/=10;
+            m/=10;
+            pwr*=10;
+        }
+        return ans;
     }
     private static int anyBaseAddition(int n1, int n2, int base) 
     {
