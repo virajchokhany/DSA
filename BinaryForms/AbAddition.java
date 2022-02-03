@@ -10,7 +10,8 @@ public class AbAddition
         int base=sc.nextInt();
 
         // System.out.println(anyBaseAddition(n1,n2,base));
-        System.out.println(anyBaseSubtraction(n1, n2, base));
+        // System.out.println(anyBaseSubtraction(n1, n2, base));
+        System.out.println(anyBaseMultiplication(n1, n2, base));
     }
 
     private static int anyBaseSubtraction(int n,int m,int base)
@@ -38,6 +39,40 @@ public class AbAddition
         }
         return ans;
     }
+
+    private static int anyBaseMultiplication(int n,int m, int base)
+    {
+        int ans=0;
+        int pwr=1;
+        while(m!=0)
+        {
+            int d=m%10;
+            int res=pwr*mutlipleWithDigit(n,d,base);
+            ans=anyBaseAddition(ans, res, base);
+            pwr*=10;
+            m/=10;
+        }
+        return ans;
+    }
+
+    private static int mutlipleWithDigit(int n, int d, int base) 
+    {
+        int ans=0;
+        int pwr=1;
+        int carry=0;
+        while(n!=0 || carry!=0)
+        {
+            int digit=n%10;
+            int prd=digit*d+carry;
+
+            ans+=pwr*(prd%base);
+            carry=prd/base;
+            n/=10;
+            pwr*=10;
+        }
+        return ans;
+    }
+
     private static int anyBaseAddition(int n1, int n2, int base) 
     {
         int ans=0;
