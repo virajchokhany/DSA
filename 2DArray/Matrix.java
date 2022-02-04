@@ -156,6 +156,73 @@ public class Matrix
         System.out.println(r);
         System.out.println(c);
     }
+    
+    public static void rotateMatrixBy90Degree(int arr[][])
+    {
+        transpose(arr);
+        reverseByColumn(arr);
+    }
+    private static void reverseByColumn(int[][] arr) 
+    {
+        int n=arr.length;
+        int m=arr[0].length;
+
+        int cmin=0,cmax=m-1;
+
+        while(cmin<cmax)
+        {
+            swapCloumns(arr,cmin,cmax);
+            cmin++;
+            cmax--;
+        }
+    }
+
+    private static void swapCloumns(int[][] arr, int cmin, int cmax) 
+    {
+        int n=arr.length;
+        for(int r=0;r<n;r++)
+        {
+            swap(arr,r,cmin,cmax);
+        }
+    }
+
+    private static void swap(int[][] arr, int r, int cmin, int cmax) {
+
+        int x=arr[r][cmin];
+        arr[r][cmin]=arr[r][cmax];
+        arr[r][cmax]=x;
+    }
+
+    private static void transpose(int[][] arr) 
+    {
+        int n=arr.length;
+        int m=arr[0].length;
+        for(int gap=1;gap<m;gap++)
+        {
+            for(int i=0,j=gap;i<n && j<m;i++,j++)
+            {
+                swap(arr,i,j);
+            }
+        }
+    }
+
+    private static void swap(int[][] arr, int i, int j) 
+    {
+        int x=arr[i][j];
+        arr[i][j]=arr[j][i];
+        arr[j][i]=x;
+    }
+
+    public static void display(int arr[][])
+    {
+        for(int i=0;i<arr.length;i++){
+            for(int j=0;j<arr[0].length;j++){
+                System.out.print(arr[i][j]+" ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
     public static void main(String[] args) {
         Scanner sc=new Scanner(System.in);
         int arr[][]=new int[sc.nextInt()][sc.nextInt()];
@@ -163,19 +230,14 @@ public class Matrix
             for(int j=0;j<arr[0].length;j++)
                 arr[i][j]=sc.nextInt();
         
-                for(int i=0;i<arr.length;i++){
-                for(int j=0;j<arr[0].length;j++){
-                    System.out.print(arr[i][j]+" ");
-                }
-                System.out.println();
-            }
                     
         // System.out.println();
         // System.out.println();
         // horizontalChange(arr);
         // System.out.println();
         // displayVerticialChange(arr);
-
-        exitPointOfMatrix(arr);
+        display(arr);
+        rotateMatrixBy90Degree(arr);
+        display(arr);
     }
 }
