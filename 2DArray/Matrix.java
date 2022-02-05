@@ -1,5 +1,7 @@
 import java.util.Scanner;
 
+import javax.swing.text.AbstractDocument.LeafElement;
+
 public class Matrix
 {
     public static void horizontalChange(int arr[][])
@@ -223,6 +225,57 @@ public class Matrix
         }
         System.out.println();
     }
+    
+    
+    public static void saddlePoint(int arr[][])
+    {
+        int n=arr.length;
+        int m=arr[0].length;
+        boolean isSaddlePointFound=false;
+        int row=0,col=0;
+        for(int r=0;r<n;r++)
+        {
+            int colIdx=findMinimumInRow(arr,r);
+            isSaddlePointFound=isMaximumInColumn(arr,r,colIdx);
+            if(isSaddlePointFound)  
+            {
+                row=r;
+                col=colIdx;
+                break;
+            }
+        }
+        if(isSaddlePointFound)
+            System.out.println(arr[row][col]);
+        else
+            System.out.println("Invalid input");
+    }
+    
+    private static boolean isMaximumInColumn(int[][] arr, int r,int colIdx) 
+    {
+        int max=arr[r][colIdx];
+        for(int i=0;i<arr.length;i++)
+        {
+            if(max<arr[i][colIdx])
+                return false;
+        }
+        return true;
+    }
+
+    private static int findMinimumInRow(int[][] arr, int r) 
+    {
+        int idx=0;
+        int mn=(int)1e9;
+        for(int j=0;j<arr[0].length;j++)
+        {
+            if(mn>arr[r][j])
+            {
+                idx=j;
+                mn=arr[r][j];
+            }
+        }
+        return idx;
+    }
+
     public static void main(String[] args) {
         Scanner sc=new Scanner(System.in);
         int arr[][]=new int[sc.nextInt()][sc.nextInt()];
@@ -237,7 +290,6 @@ public class Matrix
         // System.out.println();
         // displayVerticialChange(arr);
         display(arr);
-        rotateMatrixBy90Degree(arr);
-        display(arr);
+        saddlePoint(arr);
     }
 }
